@@ -1,7 +1,28 @@
+# MIT License
+# 
+# Copyright (c) 2022 [FacuFalcone]
+# 
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+# 
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+# 
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
 
 from Auxiliar_Mod.auxiliars import print_message as message
 
-def positive_int_to_bin(number: int) -> str:
+def _positive_int_to_bin(number: int) -> str:
     """[summary]
     Bassed on a positive integer,\n
     returns the corresponding binary string.
@@ -15,7 +36,7 @@ def positive_int_to_bin(number: int) -> str:
     final_bin_string = _dec_to_simple_bin(abs(number))
     return final_bin_string
 
-def decimal_part_to_bin(number: str) -> str:
+def _decimal_part_to_bin(number: str) -> str:
     """[summary]
     Gets the decimal part of a number and converts it into a binary string.
     
@@ -44,13 +65,13 @@ def _dec_to_simple_bin(dec_number: int):
 
     return f'{bin_number}'
 
-def check_for_comma(number: str) -> bool:
+def _check_for_comma(number: str) -> bool:
 
     if '.' in number:
         return True
     return False
 
-def binary_base_string(int_bin: str, dec_bin: str) -> str:
+def _binary_base_string(int_bin: str, dec_bin: str) -> str:
     """[summary]
     If the decimal part is not 0,\n
     concatenate the decimal part to the integer part with a '.'
@@ -68,7 +89,7 @@ def binary_base_string(int_bin: str, dec_bin: str) -> str:
     else:
         return f'{int_bin}.{dec_bin}'
 
-def get_exponent(integer_bin: str) -> int:
+def _get_exponent(integer_bin: str) -> int:
     """[summary]
     Gets how many places should move the comma 'till find a 1 to the left of the comma.
 
@@ -87,7 +108,7 @@ def get_exponent(integer_bin: str) -> int:
             break
     return exponent
 
-def complete_mantisse(exponent: int, integer_binary: str, decimal_part_bin:str) -> str:
+def _complete_mantisse(exponent: int, integer_binary: str, decimal_part_bin:str) -> str:
     """[summary]
     Complete with 0's to the right many times the mantisse[12] is not full.
 
@@ -109,22 +130,22 @@ def dec_to_IEEE_754(number: str) -> None:
     number: str = number.replace(',', '.')
     decimal_binary = '0'
     have_comma = False
-    if check_for_comma(number):
+    if _check_for_comma(number):
         have_comma = True
         numbers_sections = number.split('.')
         integer: str = numbers_sections[0]
         if len(numbers_sections) == 2:
-            decimal_binary: str = decimal_part_to_bin(numbers_sections[1])
+            decimal_binary: str = _decimal_part_to_bin(numbers_sections[1])
     else:
         integer = number
-    integer_binary: str = positive_int_to_bin(int(integer))
-    full_binary_base: str = f'{binary_base_string(integer_binary, decimal_binary)}'
+    integer_binary: str = _positive_int_to_bin(int(integer))
+    full_binary_base: str = f'{_binary_base_string(integer_binary, decimal_binary)}'
     
-    exponent = get_exponent(integer_binary)
+    exponent = _get_exponent(integer_binary)
     shifted_exp = exponent + 127
     shifted_bin_exp = _dec_to_simple_bin(shifted_exp)
     sign: str = '1' if integer[0] == '-' else '0'
-    mantisse = complete_mantisse(exponent, integer_binary, decimal_binary)
+    mantisse = _complete_mantisse(exponent, integer_binary, decimal_binary)
     final_IEEE754: str = f'{sign} {shifted_bin_exp} {mantisse}'
 
     if have_comma:
@@ -133,14 +154,14 @@ def dec_to_IEEE_754(number: str) -> None:
         cientific_noptation = f'The Full Binary in cientific notation is: {full_binary_base}'
 
     #? ####### Messages to the user ########
-    message(
+    message('#',
         'Number Part ######',
         f'The Integer part to Binary is: {integer_binary}',
         f'The Decimal part to Binary is: {decimal_binary}',
         f'{cientific_noptation}'
     )
 
-    message(
+    message('#',
         '#### Exponent ####',
         f'The exponent in decimal is: {exponent}',
         f'The exponent in binary is: {_dec_to_simple_bin(exponent)}',
@@ -148,7 +169,7 @@ def dec_to_IEEE_754(number: str) -> None:
         f'The shifted exponent in binary is: {shifted_bin_exp}'
     )
 
-    message(
+    message('#',
         '#### IEEE 754 ######',
         f'The Sign is: {sign}',
         f'The shifted exponent in binary is: {shifted_bin_exp}',

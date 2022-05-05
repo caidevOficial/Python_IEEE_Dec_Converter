@@ -1,3 +1,25 @@
+# MIT License
+# 
+# Copyright (c) 2022 [FacuFalcone]
+# 
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+# 
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+# 
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
 
 def get_decimal_input() -> str:
     """[summary]
@@ -36,20 +58,22 @@ def print_menu() -> str:
     Returns:
         str: [The selected menu option]
     """
-    print('\n__________________________')
-    print('Here you can convert a number\nfrom decimal to IEEE 754 or\nfrom IEEE 754 to decimal.')
-    print('[1] - Decimal to IEEE 754')
-    print('[2] - IEEE 754 to Decimal')
-    print('__________________________')
+    print_message('_',
+        'Here you can convert a number',
+        'from decimal to IEEE 754 or',
+        'from IEEE 754 to decimal.',
+        '[1] - Decimal to IEEE 754',
+        '[2] - IEEE 754 to Decimal',
+    )
     return _get_option()
 
-def print_message(*args) -> None:
+def print_message(symbol: str, *args) -> None:
     """[summary]
     Prints a message to the user.
     Args:
         *args: [The messages to print]
     """
-    symbols = _generate_symbols('#', args)
+    symbols = _generate_symbols(symbol, args)
     print(f'\n{symbols}')
     for arg in args:
         print(f'## {arg}')
