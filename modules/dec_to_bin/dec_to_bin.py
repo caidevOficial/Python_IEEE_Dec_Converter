@@ -20,9 +20,10 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from Auxiliar_Mod.auxiliars import print_message as message
+import numpy as np
+from tkinter.messagebox import showinfo as alert
 
-def _positive_int_to_bin(number: int) -> str:
+def __positive_int_to_bin(number: int) -> str:
     """[summary]
     Bassed on a positive integer,\n
     returns the corresponding binary string.
@@ -33,10 +34,10 @@ def _positive_int_to_bin(number: int) -> str:
     Returns:
         str: [The corresponding binary string]
     """
-    final_bin_string = _dec_to_simple_bin(abs(number))
+    final_bin_string = __dec_to_simple_bin(abs(number))
     return final_bin_string
 
-def _decimal_part_to_bin(number: str) -> str:
+def __decimal_part_to_bin(number: str) -> str:
     """[summary]
     Gets the decimal part of a number and converts it into a binary string.
     
@@ -51,27 +52,30 @@ def _decimal_part_to_bin(number: str) -> str:
     while dec_number < 1:
         dec_number *= 2
         dec_bin = f'{dec_bin}{int(dec_number)}'
-    
+    # dec_bin = np.binary_repr(int(number))
     return dec_bin
 
-def _dec_to_simple_bin(dec_number: int):
-    bin_number = 0
-    multiplier = 1
+def __dec_to_simple_bin(dec_number: int):
+    # bin_number = 0
+    # multiplier = 1
 
-    while dec_number > 0:
-        bin_number = bin_number + dec_number % 2 * multiplier
-        dec_number //= 2
-        multiplier *= 10
-
+    # while dec_number > 0:
+    #     bin_number = bin_number + dec_number % 2 * multiplier
+    #     dec_number //= 2
+    #     multiplier *= 10
+    bin_number = np.binary_repr(int(dec_number))
     return f'{bin_number}'
 
-def _check_for_comma(number: str) -> bool:
+def __check_for_comma(number: str) -> bool:
+    """
+    The function checks if a given string contains a comma.
+    
+    :param number: The parameter "number" is a string that represents a number
+    :return: a boolean value indicating whether a comma ('.') is present in the input string.
+    """
+    return '.' in number
 
-    if '.' in number:
-        return True
-    return False
-
-def _binary_base_string(int_bin: str, dec_bin: str) -> str:
+def __binary_base_string(int_bin: str, dec_bin: str) -> str:
     """[summary]
     If the decimal part is not 0,\n
     concatenate the decimal part to the integer part with a '.'
@@ -89,7 +93,7 @@ def _binary_base_string(int_bin: str, dec_bin: str) -> str:
     else:
         return f'{int_bin}.{dec_bin}'
 
-def _get_exponent(integer_bin: str) -> int:
+def __get_exponent(integer_bin: str) -> int:
     """[summary]
     Gets how many places should move the comma 'till find a 1 to the left of the comma.
 
@@ -108,7 +112,7 @@ def _get_exponent(integer_bin: str) -> int:
             break
     return exponent
 
-def _complete_mantisse(exponent: int, integer_binary: str, decimal_part_bin:str) -> str:
+def __complete_mantisse(exponent: int, integer_binary: str, decimal_part_bin:str) -> str:
     """[summary]
     Complete with 0's to the right many times the mantisse[12] is not full.
 
@@ -126,54 +130,68 @@ def _complete_mantisse(exponent: int, integer_binary: str, decimal_part_bin:str)
     
     return mantisse
 
-def dec_to_IEEE_754(number: str) -> None:
+def get_report_dec_to_IEEE_754(number: str) -> None:
+    """
+    The function `get_report_dec_to_IEEE_754` converts a decimal number to its IEEE 754 representation
+    and generates a report with the intermediate steps and the final result.
+    
+    :param number: The `number` parameter is a string representing a decimal number
+    :type number: str
+    """
     number: str = number.replace(',', '.')
     decimal_binary = '0'
-    have_comma = False
-    if _check_for_comma(number):
-        have_comma = True
+    have_comma = __check_for_comma(number)
+    if have_comma:
         numbers_sections = number.split('.')
         integer: str = numbers_sections[0]
         if len(numbers_sections) == 2:
-            decimal_binary: str = _decimal_part_to_bin(numbers_sections[1])
+            decimal_binary: str = __decimal_part_to_bin(numbers_sections[1])
     else:
         integer = number
-    integer_binary: str = _positive_int_to_bin(int(integer))
-    full_binary_base: str = f'{_binary_base_string(integer_binary, decimal_binary)}'
+    integer_binary: str = __positive_int_to_bin(int(integer))
+    full_binary_base: str = f'{__binary_base_string(integer_binary, decimal_binary)}'
     
-    exponent = _get_exponent(integer_binary)
+    exponent = __get_exponent(integer_binary)
     shifted_exp = exponent + 127
-    shifted_bin_exp = _dec_to_simple_bin(shifted_exp)
+    shifted_bin_exp = __dec_to_simple_bin(shifted_exp)
     sign: str = '1' if integer[0] == '-' else '0'
-    mantisse = _complete_mantisse(exponent, integer_binary, decimal_binary)
+    mantisse = __complete_mantisse(exponent, integer_binary, decimal_binary)
     final_IEEE754: str = f'{sign} {shifted_bin_exp} {mantisse}'
 
     if have_comma:
-            cientific_noptation = f'The Full Binary in cientific notation is: {full_binary_base}x2^{exponent}'
+            cientific_notation = f'The Full Binary in cientific notation is: {full_binary_base}x2^{exponent}'
     else:
-        cientific_noptation = f'The Full Binary in cientific notation is: {full_binary_base}'
+        cientific_notation = f'The Full Binary in cientific notation is: {full_binary_base}'
 
     #? ####### Messages to the user ########
-    message('#',
-        'Number Part ######',
-        f'The Integer part to Binary is: {integer_binary}',
-        f'The Decimal part to Binary is: {decimal_binary}',
-        f'{cientific_noptation}'
-    )
+    message =\
+    f"""
+    The Integer part to Binary is: {integer_binary}
+    The Decimal part to Binary is: {decimal_binary}
+    {cientific_notation}'
+    The exponent in decimal is: {exponent}
+    The exponent in binary is: {__dec_to_simple_bin(exponent)}
+    The shifted exponent is: {shifted_exp}
+    The shifted exponent in binary is: {shifted_bin_exp}'
+    The Sign is: {sign}
+    The shifted exponent in binary is: {shifted_bin_exp}
+    The Mantisse is: {mantisse}
+    The Final IEEE 754 String is:
+    {final_IEEE754}
+    """
+    alert('IEEE 754 Report', message)
 
-    message('#',
-        '#### Exponent ####',
-        f'The exponent in decimal is: {exponent}',
-        f'The exponent in binary is: {_dec_to_simple_bin(exponent)}',
-        f'The shifted exponent is: {shifted_exp}',
-        f'The shifted exponent in binary is: {shifted_bin_exp}'
-    )
-
-    message('#',
-        '#### IEEE 754 ######',
-        f'The Sign is: {sign}',
-        f'The shifted exponent in binary is: {shifted_bin_exp}',
-        f'The Mantisse is: {mantisse}',
-        f'The Final IEEE 754 String is:',
-        f'{final_IEEE754} ##'
-    )
+def dec_to_IEEE754(number: float | int) -> str:
+    """
+    The function `dec_to_IEEE754` converts a decimal number to its IEEE 754 representation.
+    
+    :param number: The number parameter is the decimal number that you want to convert to IEEE 754
+    format. It can be either a float or an integer
+    :type number: float | int
+    :return: a string representation of the given number in IEEE 754 format.
+    """
+    import ieee754
+    ieee_str = ieee754.IEEE754(
+        number, precision=1, force_length=32, force_exponent=8, 
+        force_mantissa=23)
+    return f'{ieee_str.__str__()[0]} {ieee_str.__str__()[1:9]} {ieee_str.__str__()[9:]}'
