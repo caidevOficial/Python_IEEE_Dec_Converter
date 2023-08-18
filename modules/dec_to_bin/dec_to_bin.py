@@ -1,26 +1,22 @@
-# MIT License
+# GNU General Public License V3
+#
+# Copyright (C) 2023 <FacuFalcone>
 # 
-# Copyright (c) 2022 [FacuFalcone]
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
 # 
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
 # 
-# The above copyright notice and this permission notice shall be included in all
-# copies or substantial portions of the Software.
-# 
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-# SOFTWARE.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import numpy as np
+import ieee754
 from tkinter.messagebox import showinfo as alert
 
 def __positive_int_to_bin(number: int) -> str:
@@ -56,13 +52,14 @@ def __decimal_part_to_bin(number: str) -> str:
     return dec_bin
 
 def __dec_to_simple_bin(dec_number: int):
-    # bin_number = 0
-    # multiplier = 1
-
-    # while dec_number > 0:
-    #     bin_number = bin_number + dec_number % 2 * multiplier
-    #     dec_number //= 2
-    #     multiplier *= 10
+    """
+    The function converts a decimal number to a simple binary representation.
+    
+    :param dec_number: The `dec_number` parameter is an integer representing a decimal number that you
+    want to convert to a binary number
+    :type dec_number: int
+    :return: a string representation of the binary number equivalent to the input decimal number.
+    """
     bin_number = np.binary_repr(int(dec_number))
     return f'{bin_number}'
 
@@ -127,7 +124,6 @@ def __complete_mantisse(exponent: int, integer_binary: str, decimal_part_bin:str
     mantisse = f'{integer_binary[len(integer_binary) - exponent:]}{decimal_part_bin}'
     while len(mantisse) < 23:
         mantisse = f'{mantisse}0'
-    
     return mantisse
 
 def get_report_dec_to_IEEE_754(number: str) -> None:
@@ -152,12 +148,6 @@ def get_report_dec_to_IEEE_754(number: str) -> None:
     full_binary_base: str = f'{__binary_base_string(integer_binary, decimal_binary)}'
     
     exponent = __get_exponent(integer_binary)
-    shifted_exp = exponent + 127
-    shifted_bin_exp = __dec_to_simple_bin(shifted_exp)
-    sign: str = '1' if integer[0] == '-' else '0'
-    mantisse = __complete_mantisse(exponent, integer_binary, decimal_binary)
-    final_IEEE754: str = f'{sign} {shifted_bin_exp} {mantisse}'
-
     if have_comma:
             cientific_notation = f'The Full Binary in cientific notation is: {full_binary_base}x2^{exponent}'
     else:
@@ -166,18 +156,7 @@ def get_report_dec_to_IEEE_754(number: str) -> None:
     #? ####### Messages to the user ########
     message =\
     f"""
-    The Integer part to Binary is: {integer_binary}
-    The Decimal part to Binary is: {decimal_binary}
-    {cientific_notation}'
-    The exponent in decimal is: {exponent}
-    The exponent in binary is: {__dec_to_simple_bin(exponent)}
-    The shifted exponent is: {shifted_exp}
-    The shifted exponent in binary is: {shifted_bin_exp}'
-    The Sign is: {sign}
-    The shifted exponent in binary is: {shifted_bin_exp}
-    The Mantisse is: {mantisse}
-    The Final IEEE 754 String is:
-    {final_IEEE754}
+    {cientific_notation}
     """
     alert('IEEE 754 Report', message)
 
@@ -190,8 +169,7 @@ def dec_to_IEEE754(number: float | int) -> str:
     :type number: float | int
     :return: a string representation of the given number in IEEE 754 format.
     """
-    import ieee754
     ieee_str = ieee754.IEEE754(
         number, precision=1, force_length=32, force_exponent=8, 
         force_mantissa=23)
-    return f'{ieee_str.__str__()[0]} {ieee_str.__str__()[1:9]} {ieee_str.__str__()[9:]}'
+    return f'{ieee_str.__str__()[0]}{ieee_str.__str__()[1:9]}{ieee_str.__str__()[9:]}'

@@ -16,4 +16,5 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from modules.dec_to_bin.dec_to_bin import dec_to_IEEE754, get_report_dec_to_IEEE_754
+from modules.bin_to_dec.bin_to_dec import IEEE754_to_dec
 from modules.validations.validations import validate_input
